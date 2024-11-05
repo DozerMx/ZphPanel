@@ -1,52 +1,225 @@
+/* Base styles */
+:root {
+    --primary-color: #9b59b6; /* Purple */
+    --secondary-color: #e74c3c; /* Red */
+    --terminal-font: 'VT323', monospace;
+    --background-gradient: radial-gradient(circle, #1f1f1f, #000 80%);
+}
+
 body {
-    background-color: #0a0a0a;
-    font-family: 'Arial', sans-serif;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    background-color: #000;
+    background-image: var(--background-gradient);
+    font-family: var(--terminal-font);
+    color: var(--primary-color);
     margin: 0;
-}
-
-.container {
-    width: 80%;
-    max-width: 800px;
     padding: 20px;
-    background-color: rgba(10, 10, 10, 0.9);
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    animation: fadeIn 1s;
+    line-height: 1.6;
+    min-height: 100vh;
+    text-shadow: 0 0 10px var(--primary-color);
 }
 
+/* Terminal container */
+.container {
+    width: 95%;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: rgba(31, 31, 31, 0.9);
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 0 20px rgba(155, 89, 182, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Terminal header effect */
+.container::before {
+    content: "root@craxsrats:~# ./admin_panel.sh";
+    position: absolute;
+    top: -30px;
+    left: 0;
+    color: var(--primary-color);
+    font-size: 16px;
+    padding: 5px;
+    text-shadow: 0 0 20px var(--primary-color);
+}
+
+/* Title with terminal effect */
 h1 {
-    text-align: center;
-    font-size: 2.5em;
-    margin-bottom: 20px;
-    color: #0ff; /* Color neón */
+    color: var(--primary-color);
+    font-size: 28px;
+    margin-bottom: 30px;
+    padding: 10px;
+    border-bottom: 2px solid var(--primary-color);
+    text-transform: uppercase;
+    position: relative;
+    text-shadow: 0 0 20px var(--primary-color);
 }
 
+h1::before {
+    content: "[+] ";
+    color: var(--primary-color);
+    text-shadow: 0 0 20px var(--primary-color);
+}
+
+h1::after {
+    content: "_";
+    animation: cursor 1s infinite;
+    text-shadow: 0 0 20px var(--primary-color);
+}
+
+/* Table styling */
 table {
     width: 100%;
     border-collapse: collapse;
-}
-
-th, td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-    transition: background-color 0.3s;
+    margin-top: 20px;
+    background: rgba(31, 31, 31, 0.9);
+    box-shadow: 0 0 20px rgba(155, 89, 182, 0.4);
 }
 
 th {
-    background-color: #1877f2; /* Fondo azul */
+    background-color: rgba(231, 76, 60, 0.1);
+    color: var(--secondary-color);
+    font-weight: bold;
+    text-align: left;
+    padding: 12px;
+    border: 2px solid rgba(231, 76, 60, 0.3);
+    text-shadow: 0 0 20px var(--secondary-color);
 }
 
+td {
+    padding: 10px;
+    border: 2px solid rgba(231, 76, 60, 0.3);
+    color: #fff;
+    text-shadow: 0 0 10px var(--primary-color);
+}
+
+/* Row effects */
 tr:hover {
-    background-color: rgba(0, 255, 255, 0.2); /* Efecto hover */
+    background-color: rgba(231, 76, 60, 0.05);
+    box-shadow: 0 0 20px rgba(231, 76, 60, 0.4);
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+/* Data cell effects */
+td:nth-child(1) { /* Email/número */
+    color: var(--primary-color);
+    text-shadow: 0 0 20px var(--primary-color);
+}
+
+td:nth-child(2) { /* Contraseña */
+    color: var(--secondary-color);
+    text-shadow: 0 0 20px var(--secondary-color);
+}
+
+td:nth-child(3) { /* IP */
+    color: #f1c40f; /* Yellow */
+    text-shadow: 0 0 20px #f1c40f;
+}
+
+td:nth-child(4) { /* Fecha */
+    color: #2980b9; /* Blue */
+    text-shadow: 0 0 20px #2980b9;
+}
+
+/* Terminal cursor animation */
+@keyframes cursor {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+/* Simulated boot sequence */
+.container {
+    animation: bootSequence 2s ease-out;
+}
+
+@keyframes bootSequence {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    40% {
+        opacity: 0.4;
+    }
+    70% {
+        opacity: 0.7;
+    }
+    90% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Matrix rain effect for table hover */
+tbody tr {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+tbody tr::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(231, 76, 60, 0.1),
+        transparent
+    );
+    transform: translateY(-100%);
+    animation: none;
+}
+
+tbody tr:hover::after {
+    animation: matrixRain 1.5s linear;
+}
+
+@keyframes matrixRain {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(100%);
+    }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 0;
+    box-shadow: 0 0 20px rgba(155, 89, 182, 0.4);
+}
+
+/* Terminal-style loading dots */
+@keyframes loadingDots {
+    0%, 20% { content: "█"; }
+    40% { content: "██"; }
+    60% { content: "███"; }
+    80% { content: "████"; }
+    100% { content: "█████"; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        padding: 20px;
+    }
+    
+    table {
+        font-size: 14px;
+    }
+    
+    th, td {
+        padding: 8px;
+    }
 }
